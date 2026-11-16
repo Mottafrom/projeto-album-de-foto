@@ -774,5 +774,20 @@
       }
     })();
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Configurações do Supabase
+    const SUPABASE_URL = 'https://kkoqiophrujfcgilylyc.supabase.co';
+  
+    const SUPABASE_KEY = 'SUA_CHAVE_PUBLICA_AQUI';
+  
+    // Criar conexão
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+  
+    console.log('Conexão com Supabase inicializada!');
+  </script>
 </body>
 </html>
