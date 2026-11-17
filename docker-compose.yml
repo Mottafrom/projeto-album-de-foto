@@ -1,0 +1,46 @@
+services:
+  postgres:
+    profiles: ["local"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: memories
+      POSTGRES_PASSWORD: memories
+      POSTGRES_DB: memories
+    ports:
+      - "5432:5432"
+    volumes:
+      - memories_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U memories -d memories"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file:
+      - .env
+    environment:
+      PORT: "3001"
+      # Prod: vem do env_file (.env / Supabase). Local profile: defina LOCAL_DATABASE_URL=postgresql://memories:memories@postgres:5432/memories
+      DATABASE_URL: ${LOCAL_DATABASE_URL:-${DATABASE_URL:-postgresql://memories:memories@postgres:5432/memories}}
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost:8080}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:8080}
+    ports:
+      - "3001:3001"
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_URL: ""
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  memories_pg:
