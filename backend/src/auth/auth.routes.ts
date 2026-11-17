@@ -1,5 +1,6 @@
 import { fromNodeHeaders } from "better-auth/node";
 import type { FastifyInstance } from "fastify";
+import { env } from "../config/env.js";
 import { auth } from "./auth.js";
 
 export async function authRoutes(app: FastifyInstance) {
@@ -7,7 +8,7 @@ export async function authRoutes(app: FastifyInstance) {
     method: ["GET", "POST"],
     url: "/api/auth/*",
     async handler(request, reply) {
-      const url = new URL(request.url, envBaseUrl(request.headers.host));
+      const url = new URL(request.url, env.BETTER_AUTH_URL);
       const headers = fromNodeHeaders(request.headers);
       const hasBody = request.method !== "GET" && request.method !== "HEAD";
 
@@ -37,9 +38,4 @@ export async function authRoutes(app: FastifyInstance) {
       return reply.send(text);
     },
   });
-}
-
-function envBaseUrl(hostHeader: string | string[] | undefined): string {
-  const host = Array.isArray(hostHeader) ? hostHeader[0] : hostHeader;
-  return `http://${host ?? "localhost:3001"}`;
 }

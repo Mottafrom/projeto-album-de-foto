@@ -37,6 +37,9 @@ services:
       dockerfile: frontend/Dockerfile
       args:
         VITE_API_URL: ""
+    environment:
+      PORT: "80"
+      API_UPSTREAM: http://api:3001
     ports:
       - "8080:80"
     depends_on:

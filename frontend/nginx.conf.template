@@ -1,11 +1,13 @@
 server {
-  listen 80;
+  listen ${PORT};
   server_name _;
   root /usr/share/nginx/html;
   index index.html;
 
+  client_max_body_size 6m;
+
   location /api/ {
-    proxy_pass http://api:3001/api/;
+    proxy_pass ${API_UPSTREAM}/api/;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
@@ -15,19 +17,21 @@ server {
   }
 
   location /docs {
-    proxy_pass http://api:3001/docs;
+    proxy_pass ${API_UPSTREAM}/docs;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
   }
 
   location /docs/ {
-    proxy_pass http://api:3001/docs/;
+    proxy_pass ${API_UPSTREAM}/docs/;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
   }
 
   location /health {
-    proxy_pass http://api:3001/health;
+    proxy_pass ${API_UPSTREAM}/health;
   }
 
   location / {
