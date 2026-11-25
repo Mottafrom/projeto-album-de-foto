@@ -1,8 +1,8 @@
 import { config } from "dotenv";
 import { resolve } from "node:path";
 
-config({ path: resolve(process.cwd(), "../.env.test") });
-config({ path: resolve(process.cwd(), "../.env") });
+config({ path: resolve(process.cwd(), "../.env.test"), quiet: true });
+config({ path: resolve(process.cwd(), "../.env"), quiet: true });
 
 process.env.PORT ??= "3001";
 process.env.CLIENT_ORIGIN ??= "http://localhost:5173";

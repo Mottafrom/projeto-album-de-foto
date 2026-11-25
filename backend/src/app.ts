@@ -1,15 +1,30 @@
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
 import Fastify from "fastify";
+import { createRequire } from "node:module";
 import { authRoutes } from "./auth/auth.routes.js";
 import { env } from "./config/env.js";
 import { photosRoutes } from "./modules/photos/photos.routes.js";
 import { registerErrorHandler } from "./plugins/error-handler.js";
 import { registerSwagger } from "./plugins/swagger.js";
 
+const require = createRequire(import.meta.url);
+const isProd = process.env.NODE_ENV === "production";
+
 export async function buildApp() {
   const app = Fastify({
-    logger: true,
+    logger: isProd
+      ? true
+      : {
+          transport: {
+            target: require.resolve("pino-pretty"),
+            options: {
+              colorize: true,
+              translateTime: "HH:MM:ss",
+              ignore: "pid,hostname",
+            },
+          },
+        },
   });
 
   registerErrorHandler(app);
